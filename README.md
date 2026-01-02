@@ -404,24 +404,45 @@ This document outlines the future development plans for the Droid-LLM-Hunter.
 
 ## FAQ
 
-**Is the AI analysis 100% accurate ?**
+<details>
+<summary>Is the AI analysis 100% accurate ?</summary>
 
-No. While Droid LLM Hunter drastically reduces noise using **Context Awareness** and **Smart Filtering**, LLMs (Artificial Intelligence) are probabilistic and can still make mistakes or "hallucinate". Treat the results as **leads** that require manual verification. The tool is designed to augment human intelligence, not replace it. Always verify findings manually!
+**No**. While Droid LLM Hunter drastically reduces noise using **Context Awareness** and **Smart Filtering**, LLMs (Artificial Intelligence) are probabilistic and can still make mistakes or "hallucinate". Treat the results as **leads** that require manual verification. The tool is designed to augment human intelligence, not replace it. Always verify findings manually!
+</details>
 
-**Why Performance scan APK slow ?**
+<details>
+<summary>How does the tool's accuracy compare to traditional SAST tools ?</summary>
+
+Droid LLM Hunter complements, rather than replaces, traditional SAST. Traditional tools excel at finding well-defined pattern vulnerabilities with near-zero false positives but struggle with logical flaws, business logic, or novel attack patterns. This tool uses AI to reason about code context and intent, catching complex issues that pattern-matching misses. The ideal workflow is to use traditional SAST for breadth and Droid LLM Hunter for depth and complex logic analysis.
+</details>
+
+<details>
+<summary>What are the main sources of false positives/negatives, and how DLH mitigate them ?</summary>
+
+ - False Positives often arise from the AI misunderstanding benign code patterns. DLH mitigate this through our multi-stage pipeline (summarize → filter → deep scan) and especially the Cross-Reference Context, which provides the AI with crucial caller/callee information to make better judgments.
+
+ - False Negatives can occur if code patterns are highly obfuscated, or if the relevant vulnerability rules are not yet defined in the knowledge base. DLH mitigate this by making the rule system fully extensible and encouraging community contributions based on new research.
+
+</details>
+
+<details>
+<summary>Why Performance scan APK slow ?</summary>
 
 **Note on Performance:** The speed of the analysis also heavily depends on:
 *   **The LLM Provider/Model:** Local models (Ollama) depend on hardware (GPU/CPU). Cloud models (Groq/Gemini/OpenAI) are generally faster but depend on network latency.
 *   **Active Rules:** Enabling more rules increases the number of queries sent to the LLM.
 *   **Context Injection:** Using Cross-Reference Context (Call Graph) adds more data to process, slightly increasing analysis time for better accuracy.
+</details>
 
-**How can I add a new vulnerability rule ?**
+<details>
+<summary>How can I add a new vulnerability rule ?</summary>
 
 To add a new vulnerability rule :
 1.  Create a new YAML file in the `config/prompts/vuln_rules` directory (containing `name`, `description`, and `prompt`).
 2.  Add the new rule to the `RulesSettings` class in `core/config_loader.py`.
 3.  Add the new rule to the `config/settings.yaml` file.
 4.  (Optional) Add a corresponding entry in `config/knowledge_base/masvs_mapping.json` to map the rule to an OWASP MASVS category.
+</details>
 
 ## Contributing
 
