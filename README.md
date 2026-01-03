@@ -79,7 +79,7 @@ It supports **Hybrid Decompilation** (Smali/Java), **Context-Aware Analysis** (C
 *   **🔍 Hybrid Filter Modes:** Choose your strategy!
     *   **`llm_only`:** Maximum accuracy using pure AI analysis.
     *   **`static_only`:** Blazing fast keyword scanning.
-    *   **`hybrid`:** The best of both worlds—Static keywords filter the noise, AI verifies the danger.
+    *   **`hybrid`:** The best of both worlds Static keywords filter the noise, AI verifies the danger.
 *   **🛠️ Flexible Configuration:** a simple yet powerful configuration file (`config/settings.yaml`) allows for easy management of LLM providers, models, rules, and **Decompiler Settings** (Apktool/JADX).
 *   **🕸️ Context-Aware Scanning:** Utilizes a **Call Graph** to understand file dependencies. Use Cross-Reference Context to let the AI know *who* calls a function and with *what* arguments. [Read the Docs](CROSS_REFERENCE_CONTEXT.md)
 *   **📚 RAG with OWASP MASVS:** Every finding is automatically enriched with the relevant **OWASP Mobile Application Security Verification Standard (MASVS)** ID (e.g., `MASVS-STORAGE-1`), making your reports audit-ready instantly.
@@ -247,7 +247,7 @@ Droid LLM Hunter supports dual decompilation to balance reliability and analysis
 ### 3. `hybrid` (Smart Fallback - Recommended)
 *   **Format:** Java (Primary) + Smali (Fallback).
 *   **Logic:** The engine tries to use JADX output. If JADX fails or produces empty/corrupt code for a file, it automatically switches to the Smali version from Apktool.
-*   **Result:** Best of both worlds—Analysis quality of Java with the reliability of Smali.
+*   **Result:** Best of both worlds Analysis quality of Java with the reliability of Smali.
 
 
 ## Installation
@@ -365,33 +365,48 @@ python dlh.py scan [APK file]
 
 ### Flags
 
-*   `--verbose`, `-v`: Enable verbose logging.
-*   `--output`, `-o`: Output file for the scan results.
-*   `--no-decompile`: Skip the decompilation step.
-*   `--rules`, `-r`: Comma-separated list of rules to run.
-*   `--list-rules`: List all available rules and exit.
-*   `--profile`, `-p`: Use a specific configuration profile for the scan.
+```bash
++------------------+------+----------------------------------------------+
+| Flag             | Short| Description                                  |
++------------------+------+----------------------------------------------+
+| --verbose        | -v   | Enable verbose logging.                      |
+| --output         | -o   | Output file for the scan results.            |
+| --no-decompile   | —    | Skip the decompilation step.                 |
+| --rules          | -r   | Comma-separated list of rules to run.        |
+| --list-rules     | —    | List all available rules and exit.           |
+| --profile        | -p   | Use a specific configuration profile.        |
++------------------+------+----------------------------------------------+
+```
 
 ### Commands
 
-*   `scan`: Scan an APK file for vulnerabilities.
-*   `config`: Manage the configuration of Droid-LLM-Hunter. This command has several sub-commands:
-    *   `wizard`: Run the interactive configuration wizard.
-    *   `provider <provider>`: Set the LLM provider.
-    *   `model <model>`: Set the LLM model.
-    *   `rules --enable <rules>` or `rules --disable <rules>`: Enable or disable rules.
-    *   `validate`: Validate the configuration file.
-    *   `show`: Show the current configuration.
-    *   `profile`: Manage configuration profiles.
-        *   `create <name>`: Create a new profile.
-        *   `list`: List all available profiles.
-        *   `switch <name>`: Switch to a different profile.
-        *   `delete <name>`: Delete a profile.
-    *   `attack-surface --enable` or `attack-surface --disable`: Enable or disable the generation of the attack surface map.
-    *   `context-injection --enable` or `context-injection --disable`: Enable or disable Cross-Reference Context Injection (Smart Filtering) to improve accuracy.
-    *   `filter-mode`: Set or show the code analysis filter mode.
-    *   `decompiler-mode`: Set or show the decompiler mode (`apktool`, `jadx`, `hybrid`).
-*   `list-rules`: List all available rules.
+```bash
++------------------------------------+---------------------------------------------------------------+
+| Command                            | Description                                                   |
++------------------------------------+---------------------------------------------------------------+
+| scan                               | Scan an APK file for vulnerabilities.                         |
+| config                             | Manage the configuration of Droid-LLM-Hunter.                 |
+| config wizard                      | Run the interactive configuration wizard.                     |
+| config provider <provider>         | Set the LLM provider.                                         |
+| config model <model>               | Set the LLM model.                                            |
+| config rules --enable <rules>      | Enable rules.                                                 |
+| config rules --disable <rules>     | Disable rules.                                                |
+| config validate                    | Validate the configuration file.                              |
+| config show                        | Show the current configuration.                               |
+| config profile                     | Manage configuration profiles.                                |
+| config profile create <name>       | Create a new profile.                                         |
+| config profile list                | List all available profiles.                                  |
+| config profile switch <name>       | Switch to a different profile.                                |
+| config profile delete <name>       | Delete a profile.                                             |
+| config attack-surface --enable     | Enable attack surface map generation.                         |
+| config attack-surface --disable    | Disable attack surface map generation.                        |
+| config context-injection --enable  | Enable Cross-Reference Context Injection.                     |
+| config context-injection --disable | Disable Cross-Reference Context Injection.                    |
+| config filter-mode                 | Set or show the code analysis filter mode.                    |
+| config decompiler-mode             | Set or show decompiler mode (apktool, jadx, hybrid).          |
+| list-rules                         | List all available rules.                                     |
++------------------------------------+---------------------------------------------------------------+
+```
 
 ## Development Roadmap
 
