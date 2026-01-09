@@ -22,7 +22,7 @@ jadx:
 
 # Advanced Analysis Settings
 analysis:
-  generate_attack_surface_map: false # Generate Attack Surface Map
+  generate_attack_surface_map: true # Generate Attack Surface Map
   use_cross_reference_context: true # Use Cross Reference Context
   filter_mode: "hybrid" # static_only, llm_only, hybrid
   decompiler_mode: "apktool" # Options: apktool (default), jadx, hybrid
