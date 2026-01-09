@@ -378,9 +378,11 @@ python dlh.py scan [APK file]
 
 This document outlines the future development plans for the Droid-LLM-Hunter.
 
-*   **AI-Powered Dynamic Analysis:** Integration with ADB/Frida to verify static findings by running the app and simulating attacks (e.g., sending malicious Intents).
-*   **Auto-Patching / Remediation:** Generating secure code fixes or `.diff` patches to automatically resolve identified vulnerabilities.
-*   **CI/CD Integration:** Official Docker support and GitHub/GitLab templates for automated security scanning in DevOps pipeline.
+*   **CI/CD Integration (`v1.1`):** Official Docker support and GitHub/GitLab templates for automated security scanning in DevOps pipeline.
+*   **AI-Powered Dynamic Analysis (`v2.0`):** Integration with **Frida & ADB** to verify static findings by running the app and simulating attacks (e.g., Reflection/IPC tracing, Intent Fuzzing). This directly addresses the limitations of static analysis regarding **Dynamic Dispatch** and **JNI**.
+*   **Taint Analysis Engine:** Implementation of a lightweight Trace Engine (or FlowDroid integration) to map **Source-to-Sink** data paths, verifying if inputs are properly sanitized before reaching sensitive functions.
+*   **De-obfuscation Support:** Support for mapping files (Proguard) and AI-based variable renaming to handle **Obfuscated Applications** and improve Call Graph accuracy.
+*   **Auto-Patching:** Generating secure code fixes or `.diff` patches to automatically resolve identified vulnerabilities.
 *   **More Rules:** Constantly adding new vulnerability detection rules to cover the latest Android security threats.
 
 ## FAQ
