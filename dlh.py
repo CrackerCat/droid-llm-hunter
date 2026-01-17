@@ -43,7 +43,9 @@ def main(ctx: typer.Context,
     ctx.meta["profile"] = profile
 
 @app.command()
-def scan(ctx: typer.Context, apk_path: str = typer.Argument(..., help="Path to the APK file to analyze.")):
+def scan(ctx: typer.Context, 
+         apk_path: str = typer.Argument(..., help="Path to the APK file to analyze."),
+         generate_exploit: bool = typer.Option(False, "--generate-exploit", help="Generate PoC scripts for detected vulnerabilities.")):
     """
     Scan an APK file for vulnerabilities.
     """
@@ -54,6 +56,10 @@ def scan(ctx: typer.Context, apk_path: str = typer.Argument(..., help="Path to t
     log.info("Initializing Droid-LLM-Hunter...")
     try:
         settings = load_settings(profile)
+        
+        if generate_exploit:
+            settings.analysis.generate_exploit = True
+            
         log.info("Configuration loaded successfully.")
         engine = Engine(settings)
         engine.run(apk_path, output, no_decompile, rules)

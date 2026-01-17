@@ -28,7 +28,8 @@ analysis:
   use_cross_reference_context: true # Use Cross Reference Context
   filter_mode: "hybrid" # static_only, llm_only, hybrid
   decompiler_mode: "apktool" # Options: apktool (default), jadx, hybrid
-
+  generate_exploit: false # Generate PoC scripts for vulnerabilities
+  
 # Analysis Rules
 # Enable or disable specific vulnerability checks
 rules:

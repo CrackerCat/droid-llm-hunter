@@ -17,9 +17,12 @@ class Engine:
     def __init__(self, settings: Settings):
         self.settings = settings
         self.llm_client = self._setup_llm_client()
-        self.call_graph_builder = None
         self.summaries = {}
         self.masvs_mapping = self._load_masvs_mapping()
+        
+        self.apk_name = "target_app" # Default fallback
+        
+        # Load Call Graph Builder if enabled
 
     def _load_masvs_mapping(self):
         try:
@@ -60,6 +63,104 @@ class Engine:
         if result.get("is_vulnerable"):
             return "Vulnerable"
         return "Not Vulnerable"
+
+    def _generate_poc(self, file_path: str, code_snippet: str, vuln_description: str, rule_name: str):
+        """Generates a PoC script for a confirmed vulnerability."""
+        try:
+            with open("config/prompts/exploit_prompt.txt", "r") as f:
+                prompt_template = f.read()
+            
+            prompt = prompt_template.replace("{vulnerability_description}", vuln_description)
+            prompt = prompt.replace("{file_path}", file_path)
+            prompt = prompt.replace("{code_snippet}", code_snippet[:8000]) # Truncate to fit context if needed
+            
+            log.info(f"Generating PoC for {rule_name} in {os.path.basename(file_path)}...")
+            
+            # We use a dummy context as this prompt is self-contained
+            # We might strictly need 'system_prompt', but the exploit prompt is designed to be standalone-ish
+            # However, BaseLLMClient might expect a certain context structure.
+            # Let's check anthropic.py wrapper. base.py uses context.get("system_prompt") + context.get("vuln_prompt")
+            # We should wrap our specific exploit prompt into "vuln_prompt" and leave system empty or minimal.
+            
+            context = {
+                "system_prompt": "You are a Red Team Exploit Developer.",
+                "vuln_prompt": prompt, # The template acts as the main instruction
+                "file_path": file_path
+            }
+
+            # Reuse the LLM client but for this specific task
+            # Note: prompt_template variable already has {code_snippet} placeholder filled, 
+            # but BaseLLMClient might try to format it again if we passed it as vuln_prompt.
+            # BaseLLMClient logic: return f"{system_prompt}\n\n{formatted_prompt.format(...)}"
+            # If we already formatted it, the .format() might fail if there are stray braces.
+            # Strategy: Pass empty code_snippet to analyze_code, and put the FULLY FORMATTED prompt into context['vuln_prompt']
+            # escaping braces if necessary.
+            
+            # Actually, looking at AnthropicClient:
+            # formatted_prompt = vuln_prompt.format(code_snippet=code_snippet, file_path=...)
+            # So we should pass the TEMPLATE as vuln_prompt, and the args in context or args.
+            # But the template has specific placeholders.
+            
+            # Simpler approach: Manual call to internal _construct_prompt is hidden.
+            # We must use analyze_code interface.
+            
+            # Let's just construct the final string and pass it as system_prompt, 
+            # and verify analyze_code doesn't mangle it.
+            # Wait, analyze_code usually formats the vuln_prompt. 
+            
+            # Let's bypass analyze_code formatting issues by passing the fully prepared prompt as 'system_prompt' 
+            # and an empty 'vuln_prompt'.
+            
+            final_prompt_content = prompt_template.format(
+                vulnerability_description=vuln_description,
+                file_path=file_path,
+                code_snippet=code_snippet[:8000]
+            )
+            
+            context_wrapper = {
+                "system_prompt": final_prompt_content,
+                "vuln_prompt": "", # Empty so format() has nothing to complain about
+                "file_path": file_path
+            }
+            
+            poc_content = self.llm_client.analyze_code("", context_wrapper)
+            
+            if not poc_content:
+                log.warning("PoC generation returned empty.")
+                return
+
+            # Determine extension
+            ext = ".txt"
+            if "Java.perform" in poc_content or "Java.use" in poc_content or "console.log" in poc_content:
+                ext = ".js"
+            elif "import " in poc_content or "def " in poc_content or "```python" in poc_content:
+                ext = ".py" 
+            elif "<html" in poc_content.lower() or "<script" in poc_content.lower():
+                ext = ".html"
+            elif "#!/bin/bash" in poc_content or "adb shell" in poc_content:
+                ext = ".sh"
+            
+            # Create exploits directory: output/[apk_name]_exploits/
+            # Use the stored apk_name (without extension ideally, or keep it?)
+            # User wants: "dvba.apk" -> "dvba_exploits" (or similar)
+            
+            clean_name = self.apk_name
+            if clean_name.lower().endswith(".apk"):
+                clean_name = clean_name[:-4]
+                
+            exploit_dir = f"output/{clean_name}_exploits"
+            os.makedirs(exploit_dir, exist_ok=True)
+            
+            filename = f"{rule_name}_{os.path.basename(file_path)}{ext}"
+            save_path = os.path.join(exploit_dir, filename)
+            
+            with open(save_path, "w") as f:
+                f.write(poc_content)
+                
+            log.success(f"PoC saved to {save_path}")
+
+        except Exception as e:
+            log.error(f"Failed to generate PoC: {e}")
 
     def _extract_json_str(self, text: str) -> str:
         """Extracts the first valid JSON object string by counting braces."""
@@ -215,6 +316,9 @@ class Engine:
                 # Enrich with MASVS
                 if status == "Vulnerable":
                     parsed_result = self._enrich_result(rule_name, parsed_result)
+                    
+                    if self.settings.analysis.generate_exploit:
+                         self._generate_poc(file_path, full_code_context, parsed_result.get("description", ""), rule_name)
 
                 results.append({
                     "file": file_path,
@@ -250,7 +354,10 @@ class Engine:
                 
                 # Enrich with MASVS
                 if status == "Vulnerable":
-                    parsed_result = self._enrich_result(rule_name, parsed_result)    
+                    parsed_result = self._enrich_result(rule_name, parsed_result)
+                    
+                    if self.settings.analysis.generate_exploit:
+                        self._generate_poc(manifest_path, code_snippet, parsed_result.get("description", ""), rule_name)
 
                 results.append({
                     "file": manifest_path,
@@ -385,7 +492,8 @@ class Engine:
         log.info(f"Starting analysis of {apk_path}...")
         
         rules_to_run = rules.split(',') if rules else None
-        apk_name = os.path.basename(apk_path)
+        self.apk_name = os.path.basename(apk_path) # Store for later use
+        apk_name = self.apk_name
         output_dir = f"output/{apk_name}_decompiled"
         
         decomp_mode = self.settings.analysis.decompiler_mode
