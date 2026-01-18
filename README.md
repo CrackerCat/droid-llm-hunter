@@ -87,6 +87,7 @@ It supports **Hybrid Decompilation** (Smali/Java), **Context-Aware Analysis** (C
 *   **📚 RAG with OWASP MASVS:** Every finding is automatically enriched with the relevant **OWASP Mobile Application Security Verification Standard (MASVS)** ID (e.g., `MASVS-STORAGE-1`), making your reports audit-ready instantly.
 *   **🤖 Multi-Provider Support:** Run locally with **Ollama** (free & private) or scale up with **Gemini**, **Groq**, **OpenAI** and **Anthropic**.
 *   **📊 Structured Security Reports:** Get detailed JSON output containing severity, confidence scores, evidence snippets, and even an "Attack Surface Map" of the application.
+*   **💥 Auto-Exploit Generation:** Automatically generates actionable **Proof-of-Concept (PoC)** scripts (Bash, HTML, Python) for confirmed vulnerabilities, proving the impact instantly.
 
 ## Scan Workflow
 
@@ -396,19 +397,24 @@ python dlh.py scan [APK file]
     python dlh.py config --help
     ```
 
+*   **Show Manage Scan:**
+    ```bash
+    python dlh.py scan --help
+    ```
+
 ### Flags
 
 ```bash
-+------------------+------+----------------------------------------------+
-| Flag             | Short| Description                                  |
-+------------------+------+----------------------------------------------+
-| --verbose        | -v   | Enable verbose logging.                      |
-| --output         | -o   | Output file for the scan results.            |
-| --no-decompile   | —    | Skip the decompilation step.                 |
-| --rules          | -r   | Comma-separated list of rules to run.        |
-| --list-rules     | —    | List all available rules and exit.           |
-| --profile        | -p   | Use a specific configuration profile.        |
-+------------------+------+----------------------------------------------+
++--------------------+------+----------------------------------------------------+
+| Flag               | Short| Description                                        |
++--------------------+------+----------------------------------------------------+
+| --verbose          | -v   | Enable verbose logging.                            |
+| --output           | -o   | Output file for the scan results.                  |
+| --no-decompile     | —    | Skip the decompilation step.                       |
+| --rules            | -r   | Comma-separated list of rules to run.              |
+| --list-rules       | —    | List all available rules and exit.                 |
+| --profile          | -p   | Use a specific configuration profile.              |
++--------------------+------+----------------------------------------------------+
 ```
 
 ### Commands
@@ -418,6 +424,7 @@ python dlh.py scan [APK file]
 | Command                            | Description                                                   |
 +------------------------------------+---------------------------------------------------------------+
 | scan                               | Scan an APK file for vulnerabilities.                         |
+| scan [APK]--generate-exploit       | Generate PoC scripts for confirmed vulnerabilities.           |
 | config                             | Manage the configuration of Droid-LLM-Hunter.                 |
 | config wizard                      | Run the interactive configuration wizard.                     |
 | config provider <provider>         | Set the LLM provider.                                         |

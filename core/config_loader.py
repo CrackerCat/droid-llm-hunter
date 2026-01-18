@@ -26,6 +26,7 @@ class AnalysisSettings(BaseModel):
     use_cross_reference_context: bool = True
     filter_mode: str = "llm_only" # static_only, llm_only, hybrid
     decompiler_mode: str = "apktool" # apktool, jadx, hybrid
+    generate_exploit: bool = False
  # Default to True for backward compatibility
 
 
