@@ -49,15 +49,15 @@ Features **Auto-Exploit Generation**, transforming from a passive scanner into a
       <td align="center" valign="top">
         <strong>Tutorial Install Droid LLM Hunter</strong>
         <br><br>
-        <a href="https://www.youtube.com/watch?v=dKTGMsPmxqg" target="_blank">
-          <img src="https://img.youtube.com/vi/dKTGMsPmxqg/hqdefault.jpg" alt="Demo 1" width="100%"/>
+        <a href="https://www.youtube.com/watch?v=HaasUKfLTSU" target="_blank">
+          <img src="https://img.youtube.com/vi/HaasUKfLTSU/hqdefault.jpg" alt="Demo 1" width="100%"/>
         </a>
       </td>
       <td align="center" valign="top">
         <strong>WebView via DeepLink - Exported Components</strong>
         <br><br>
-        <a href="https://www.youtube.com/watch?v=VBNsb8ibK9Q" target="_blank">
-          <img src="https://img.youtube.com/vi/VBNsb8ibK9Q/hqdefault.jpg" alt="Demo 2" width="100%"/>
+        <a href="https://www.youtube.com/watch?v=RYyJsm53w4I" target="_blank">
+          <img src="https://img.youtube.com/vi/RYyJsm53w4I/hqdefault.jpg" alt="Demo 2" width="100%"/>
         </a>
       </td>
     </tr>
@@ -206,17 +206,17 @@ Droid LLM Hunter uses a multi-stage process to analyze an APK:
   <table>
     <tr>
       <td align="center" valign="top">
-        <strong>Universal Logic Flaw</strong>
+        <strong>Hardcoded Secrets</strong>
         <br><br>
-        <a href="https://www.youtube.com/watch?v=0VtOxaxZajY" target="_blank">
-          <img src="https://img.youtube.com/vi/0VtOxaxZajY/hqdefault.jpg" alt="Demo 1" width="100%"/>
+        <a href="https://www.youtube.com/watch?v=djDF4YZYPaM" target="_blank">
+          <img src="https://img.youtube.com/vi/djDF4YZYPaM/hqdefault.jpg" alt="Demo 1" width="100%"/>
         </a>
       </td>
       <td align="center" valign="top">
-        <strong>Hardcoded Secrets</strong>
+        <strong>SQL Injection - Generate-Exploit</strong>
         <br><br>
-        <a href="https://www.youtube.com/watch?v=F9sDP9qO1o0" target="_blank">
-          <img src="https://img.youtube.com/vi/F9sDP9qO1o0/hqdefault.jpg" alt="Demo 2" width="100%"/>
+        <a href="https://www.youtube.com/watch?v=JNBZ_gfMffk" target="_blank">
+          <img src="https://img.youtube.com/vi/JNBZ_gfMffk/hqdefault.jpg" alt="Demo 2" width="100%"/>
         </a>
       </td>
     </tr>
@@ -473,7 +473,7 @@ python dlh.py scan [APK file]
 | Command                            | Description                                                   |
 +------------------------------------+---------------------------------------------------------------+
 | scan                               | Scan an APK file for vulnerabilities.                         |
-| scan [APK]--generate-exploit       | Generate PoC scripts for confirmed vulnerabilities.           |
+| scan [APK] --generate-exploit      | Generate PoC scripts for confirmed vulnerabilities.           |
 | config                             | Manage the configuration of Droid-LLM-Hunter.                 |
 | config wizard                      | Run the interactive configuration wizard.                     |
 | config provider <provider>         | Set the LLM provider.                                         |
