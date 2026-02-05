@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+
+
 # Install Apktool
 ENV APKTOOL_VERSION=2.12.1
 RUN wget -q "https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_${APKTOOL_VERSION}.jar" -O /usr/local/bin/apktool.jar \
@@ -35,6 +37,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy Application Source Code
 COPY . .
+
+# Make entrypoint executable
+RUN chmod +x /app/scripts/ci/entrypoint.sh
 
 # Create Output Directory
 RUN mkdir -p /app/output
